@@ -20,7 +20,7 @@ return new class extends Migration
 
         });
 
-        Schema::table('tag_movie', function (Blueprint $table) {
+        Schema::table('movie_tag', function (Blueprint $table) {
 
             $table -> foreignId('tag_id')
                    -> constrained();
@@ -42,11 +42,11 @@ return new class extends Migration
 
         });
 
-        Schema::table('tag_movie', function (Blueprint $table) {
+        Schema::table('movie_tag', function (Blueprint $table) {
 
-            $table -> dropForeign('tag_movie_tag_id_foreign');
+            $table -> dropForeign('movie_tag_tag_id_foreign');
 
-            $table -> dropForeign('tag_movie_movie_id_foreign');
+            $table -> dropForeign('movie_tag_movie_id_foreign');
         
         });
     }
