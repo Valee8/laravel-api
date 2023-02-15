@@ -6,13 +6,17 @@
         Genres
     </h1>
 
+    <h2>
+        <a href="{{ route('movie.home')}}">Movies List</a>
+    </h2>
+
     @foreach ($genres as $genre)
         <h2>{{ $genre -> name }}</h2>
         
         <ul>
             @foreach ($genre -> movies as $movie)
                 <li>
-                    Name: {{ $movie -> name }} - Year: {{ $movie -> year }} - Cash Out: {{ $movie -> cashOut }}&dollar;
+                    Name: {{ $movie -> name }}
                 </li>
             @endforeach
         </ul>
