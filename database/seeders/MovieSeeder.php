@@ -18,17 +18,17 @@ class MovieSeeder extends Seeder
      */
     public function run()
     {
-        Movie::factory() -> count(100) -> make() -> each(function($p) {
+        Movie::factory() -> count(100) -> make() -> each(function($m) {
 
             // Assegno un genere casuale ai movies
             $genre = Genre::inRandomOrder() -> first();
-            $p -> genre() -> associate($genre);
+            $m -> genre() -> associate($genre);
 
-            $p -> save();
+            $m -> save();
 
             //Assegno da 1 a 5 tag casuali ai movies
             $tags = Tag::inRandomOrder() -> limit(rand(1, 5)) -> get();
-            $p -> tags() -> attach($tags);
+            $m -> tags() -> attach($tags);
         });
     }
 }
