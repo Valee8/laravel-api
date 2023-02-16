@@ -48,7 +48,37 @@ class MainController extends Controller
             'name' => 'required|string|min:3|max:64',
             'year' => 'required|integer|min:1900',
             'cashOut' => 'nullable|integer|min:0',
-            'genre_id' => 'required|integer',
+            'genre_id' => 'required|integer|min:1',
+            'tags_id' => 'required|array',
+        ]);
+
+        $movie = Movie::make($data);
+        $genre = Genre::find($data['genre_id']);
+
+        $movie -> genre() -> associate($genre);
+        $movie -> save();
+
+        $tags = Tag::find($data['tags_id']);
+        $movie -> tags() -> attach($tags);
+
+        return redirect() -> route('movie.home');
+    }
+
+    public function movieEdit(Movie $movie) {
+
+        $genres = Genre::all();
+        $tags = Tag::all();
+
+        return view('pages.movie.edit', compact('movie', 'tags', 'genres'));
+    }
+
+    public function movieUpdate(Request $request, Movie $movie) {
+
+        $data = $request -> validate([
+            'name' => 'required|string|min:3|max:64',
+            'year' => 'required|integer|min:1900',
+            'cashOut' => 'nullable|integer|min:0',
+            'genre_id' => 'required|integer|min:1',
             'tags_id' => 'required|array',
         ]);
 
