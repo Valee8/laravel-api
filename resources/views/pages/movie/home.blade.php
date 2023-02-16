@@ -16,7 +16,8 @@
         @foreach ($movies as $movie)
             <li>
                 Name: {{ $movie -> name }} - Year: {{ $movie -> year }} - Cash Out: {{ $movie -> cashOut }}&dollar;
-                - <a href="{{ route('movie.delete', $movie )}}">Delete</a>
+                - <a href="{{ route('movie.delete', $movie) }}">Delete</a>
+                - <a href="{{ route('movie.edit', $movie) }}">Edit</a>
             </li>
         @endforeach
     </ul>
