@@ -7,7 +7,7 @@
     </h1>
 
     <h2>
-        <a href="{{ route('create.movie ')}}">Create new Movie</a>
+        <a href="{{ route('movie.create')}}">Create new Movie</a>
     </h2>
 
     <a href="{{ route('home') }}">Back</a>
