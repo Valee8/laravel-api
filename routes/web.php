@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\MainController;
 
+use App\Http\Controllers\ApiController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,3 +30,5 @@ Route::post('/movie/store/', [MainController::class, 'movieStore']) -> name('mov
 Route::get('/movie/edit/{movie}', [MainController::class, 'movieEdit']) -> name('movie.edit');
 
 Route::post('/movie/update/{movie}', [MainController::class, 'movieUpdate']) -> name('movie.update');
+
+Route::get('/movie/v1/all', [ApiController::class, 'movieAll']);
