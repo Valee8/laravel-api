@@ -23,3 +23,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/movie/v1/all', [ApiController::class, 'movieAll']);
 
 Route::post('/movie/v1/store', [ApiController::class, 'movieStore']);
+
+Route::delete('/movie/v1/delete/{movie}', [ApiController::class, 'movieDelete']);

@@ -49,6 +49,17 @@ export default {
           console.log(newMovie);
         })
         .catch(err => console.error(err));
+    },
+    movieDelete(movie) {
+      axios.delete(api_url + 'api/movie/v1/delete/' + movie.id)
+        .then(res => {
+
+          const data = res.data;
+          const success = data.success;
+
+          this.updateData();
+        })
+        .catch(err => console.error(err));
     }
   },
   mounted() {
@@ -93,7 +104,7 @@ export default {
 
     <ul v-for="movie in movies">
       <li v-if="genre.id === movie.genre_id">
-        {{ movie.name }}
+        {{ movie.name }} <button @click="movieDelete(movie)">Delete</button>
       </li>
     </ul>
 
