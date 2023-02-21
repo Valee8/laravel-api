@@ -1,113 +1,156 @@
-<script>
-
+<script >
 import axios from 'axios';
 
-const api_url = 'http://localhost:8000/';
+const API_URL = 'http://localhost:8000/api/';
+const API_VER = 'v1/';
+const API = API_URL + API_VER;
 
+const EMPTY_NEW_MOVIE = {
+  tags_id: []
+};
 export default {
-
   data() {
+
     return {
       movies: [],
-      tags: [],
       genres: [],
-      newMovie: {
-        tags_id: []
+      tags: [],
+      newMovie: { ...EMPTY_NEW_MOVIE },
+      state: {
+        movieForm: false
       }
     }
   },
   methods: {
     updateData() {
-      axios.get(api_url + 'api/movie/v1/all')
+      axios.get(API + 'movie/all')
+        .then(res => {
+          const data = res.data;
+          const success = data.success;
+          const response = data.response;
+
+          const movies = response.movies;
+          const genres = response.genres;
+          const tags = response.tags;
+
+          if (success) {
+            this.movies = movies;
+            this.genres = genres;
+            this.tags = tags;
+          }
+        })
+        .catch(err => console.log(err));
+    },
+    movieEdit(movie) {
+
+      console.log('movie', movie);
+      console.log('newMovie', this.newMovie);
+
+      this.newMovie = { ...movie };
+      this.newMovie.tags_id = [];
+
+      for (let i = 0; i < movie.tags.length; i++) {
+
+        const tag = movie.tags[i];
+        this.newMovie.tags_id.push(tag.id);
+      }
+
+      this.state.movieForm = true;
+    },
+    movieDelete(movie) {
+      axios.delete(API + 'movie/delete/' + movie.id)
         .then(res => {
 
           const data = res.data;
           const success = data.success;
-          this.movies = data.response.movies;
-          this.tags = data.response.tags;
-          this.genres = data.response.genres;
 
-          console.log(this.genres);
-          console.log(this.movies);
-          console.log(this.tags);
+          if (success)
+            this.updateData();
         })
-        .catch(err => console.error(err));
+        .catch(err => console.log(err));
     },
-    movieCreate(e) {
+    movieSubmit(e) {
+
       e.preventDefault();
 
       const newMovie = this.newMovie;
+      const actualApi = API + (
+        'id' in newMovie
+          ? 'movie/update/' + this.newMovie.id
+          : 'movie/store'
+      );
 
-      axios.post(api_url + 'api/movie/v1/store', newMovie)
+      console.log(newMovie);
+      console.log(actualApi);
+
+      axios.post(actualApi, newMovie)
         .then(res => {
-
           const data = res.data;
           const success = data.success;
 
-          this.updateData();
-
-          console.log(newMovie);
+          if (success) {
+            this.closeForm();
+            this.updateData();
+          }
         })
-        .catch(err => console.error(err));
+        .catch(err => console.log(err));
     },
-    movieDelete(movie) {
-      axios.delete(api_url + 'api/movie/v1/delete/' + movie.id)
-        .then(res => {
-
-          const data = res.data;
-          const success = data.success;
-
-          this.updateData();
-        })
-        .catch(err => console.error(err));
-    }
+    closeForm() {
+      this.newMovie = { ...EMPTY_NEW_MOVIE };
+      this.state.movieForm = false;
+    },
   },
   mounted() {
     this.updateData();
   }
 };
-
 </script>
 
 <template>
-  <form>
-    <label for="name">Name: </label>
-    <input type="text" name="name" v-model="newMovie.name">
-    <br>
-    <label for="year">Year: </label>
-    <input type="text" name="year" v-model="newMovie.year">
-    <br>
-    <label for="cashOut">Cash Out: </label>
-    <input type="number" name="cashOut" v-model="newMovie.cashOut">
-    <br>
-    <label name="genre">Genres: </label>
-    <select name="genre_id" v-model="newMovie.genre_id">
-      <option v-for="genre in genres" :value="genre.id" :key="genre.id">{{ genre.name }}</option>
-    </select>
-    <br>
-    <div v-for="tag in tags" :key="tag.id">
-      <input type="checkbox" :value="tag.id" v-model="newMovie.tags_id">
-      <label :for="tag.id">{{ tag.name }}</label>
+  <div>
+    <h1>Movies</h1>
+    <form v-if="state.movieForm">
+      <label for="name">Name</label>
+      <input type="text" name="name" v-model="newMovie.name">
+      <br>
+      <label for="year">Year</label>
+      <input type="number" name="year" v-model="newMovie.year">
+      <br>
+      <label for="cashOut">Cash out</label>
+      <input type="number" name="cashOut" v-model="newMovie.cashOut">
+      <br>
+      <label for="genre">Genre</label>
+      <select name="genre_id" v-model="newMovie.genre_id">
+        <option v-for="genre in genres" :key="genre.id" :value="genre.id">{{ genre.name }}</option>
+      </select>
+      <br>
+      <label>Tags:</label>
+      <br>
+      <div v-for="tag in tags" :key="tag.id">
+        <input type="checkbox" :id="'tag-' + tag.id" :value="tag.id" v-model="newMovie.tags_id">
+        <label :for="'tag-' + tag.id">{{ tag.name }}</label>
+      </div>
+
+      <button @click="closeForm">CANCEL</button>
+      <input type="submit" @click="movieSubmit"
+        :value="'id' in newMovie ? 'UPDATE MOVIE: ' + newMovie.id : 'CREATE NEW MOVIE'">
+    </form>
+    <div v-else>
+      <button @click="state.movieForm = true">CREATE NEW MOVIE</button>
+      <ul>
+        <li v-for="movie in movies" :key="movie.id">
+          {{ movie.name }}
+          <br>
+          <button @click="movieEdit(movie)">EDIT</button>
+          <button @click="movieDelete(movie)">DELETE</button>
+          <ul>
+            <li v-for="tag in movie.tags" :key="tag.id">
+              {{ tag.name }}
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
-    <br>
-    <input type="submit" value="CREATE" @click="movieCreate">
-  </form>
-
-  <h1>
-    Movies
-  </h1>
-
-  <div v-for="(genre, index) in genres" :key="index">
-    <h2>
-      {{ genre.name }}
-    </h2>
-
-    <ul v-for="movie in movies">
-      <li v-if="genre.id === movie.genre_id">
-        {{ movie.name }} <button @click="movieDelete(movie)">Delete</button>
-      </li>
-    </ul>
-
   </div>
 </template>
 
