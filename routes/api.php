@@ -20,8 +20,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/movie/v1/all', [ApiController::class, 'movieAll']);
+Route::get('/v1/movie/all', [ApiController::class, 'movieAll']);
 
-Route::post('/movie/v1/store', [ApiController::class, 'movieStore']);
+Route::post('/v1/movie/store', [ApiController::class, 'movieStore']);
 
-Route::delete('/movie/v1/delete/{movie}', [ApiController::class, 'movieDelete']);
+Route::delete('/v1/movie/delete/{movie}', [ApiController::class, 'movieDelete']);
+
+Route::post('/v1/movie/update/{movie}', [ApiController::class, 'movieUpdate']);
